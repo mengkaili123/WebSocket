@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bootdo.system.dao.Weather2Dao">
+
+	<select id="get" resultType="com.bootdo.system.domain.Weather2DO">
+		select `id`,`date`,`temperature`,`local`,`devices`,`fire` from weather2 where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.bootdo.system.domain.Weather2DO">
+		select `id`,`date`,`temperature`,`local`,`devices`,`fire` from weather2
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="date != null and date != ''"> and date = #{date} </if>
+		  		  <if test="temperature != null and temperature != ''"> and temperature = #{temperature} </if>
+		  		  <if test="local != null and local != ''"> and local = #{local} </if>
+		  		  <if test="devices != null and devices != ''"> and devices = #{devices} </if>
+		  		  <if test="fire != null and fire != ''"> and fire = #{fire} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from weather2
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="date != null and date != ''"> and date = #{date} </if>
+		  		  <if test="temperature != null and temperature != ''"> and temperature = #{temperature} </if>
+		  		  <if test="local != null and local != ''"> and local = #{local} </if>
+		  		  <if test="devices != null and devices != ''"> and devices = #{devices} </if>
+		  		  <if test="fire != null and fire != ''"> and fire = #{fire} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.bootdo.system.domain.Weather2DO" useGeneratedKeys="true" keyProperty="id">
+		insert into weather2
+		(
+			`date`, 
+			`temperature`, 
+			`local`, 
+			`devices`, 
+			`fire`
+		)
+		values
+		(
+			#{date}, 
+			#{temperature}, 
+			#{local}, 
+			#{devices}, 
+			#{fire}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.bootdo.system.domain.Weather2DO">
+		update weather2 
+		<set>
+			<if test="date != null">`date` = #{date}, </if>
+			<if test="temperature != null">`temperature` = #{temperature}, </if>
+			<if test="local != null">`local` = #{local}, </if>
+			<if test="devices != null">`devices` = #{devices}, </if>
+			<if test="fire != null">`fire` = #{fire}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from weather2 where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from weather2 where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
